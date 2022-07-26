@@ -12,8 +12,8 @@ class Task(models.Model):
     assigned_to = models.CharField(max_length=200)
     is_removed = models.BooleanField(default=False, blank=True)
     created_at = models.DateTimeField(default=datetime.now())
-    updated_at = models.DateTimeField(default=0, null=True, blank=True)
-    removed_at = models.DateTimeField(default=0, null=True, blank=True)
+    updated_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)
+    removed_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)
 
     class Meta:
         db_table = "tbl_task"
