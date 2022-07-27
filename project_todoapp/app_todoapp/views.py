@@ -7,6 +7,49 @@ from .forms import TaskCreateForm
 from .models import Task
 
 # Create your views here.
+def task_index(request):
+    tasks = Task.objects.all()
+    context = {
+        "tasks": tasks,
+        "title" : "TASK List",
+        "body_title": "Todo App | TASK List"
+    }
+    template = "tasks/index.html"
+    return render(request, template, context)
+
+def task_show(request, id):
+    task = Task.objects.get(id=id)
+    context = {
+        "task": task,
+        "title" : "TASK Show",
+        "body_title": "Todo App | TASK Show"
+    }
+    template = "tasks/show.html"
+    return render(request, template, context)
+
+def task_edit(request, id):
+    task = Task.objects.get(id=id)
+    context = {
+        "tasks": task,
+        "title" : "TASK Edit",
+        "body_title": "Todo App | TASK Edit"
+    }
+    template = "tasks/edit.html"
+    return render(request, template, context)
+
+def task_delete(request, id):
+    task = Task.objects.get(id=id)
+    task.delete()
+
+    tasks = Task.objects.all()
+    context = {
+        "tasks": tasks,
+        "title" : "TASK List",
+        "body_title": "Todo App | TASK List"
+    }
+    template = "tasks/index.html"
+    return render(request, template, context)
+
 def task_create(request):
     if request.method == "POST":
         task = Task()
@@ -20,8 +63,10 @@ def task_create(request):
         task.created_at = datetime.now()
         task.save()
 
+        tasks = Task.objects.all()
         template = "tasks/index.html"
         context = {
+            "tasks": tasks,
             "title" : "TASK List",
             "body_title": "Todo App | TASK List"
         }
