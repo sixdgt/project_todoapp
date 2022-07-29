@@ -4,6 +4,11 @@
 {{ title }}
 {% endblock %}
 
+{% block link_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center">{{ body_title }}</h1>

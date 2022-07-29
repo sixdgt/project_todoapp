@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">{{ body_title }}</h1>
+    <div class="card mt-3">
+        <div class="card-body">
+            <form action="{% url 'task.update' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ task.id }}">
+                <div class="form-group mb-3">
+                    <label for="task_title">Title</label>
+                    <input type="text" class="form-control" name="task_title" value="{{ task.task_title }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="task_desc">Description</label>
+                    <input type="text" class="form-control" name="task_desc" value="{{ task.task_desc }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="task_assign_date">Assign Date</label>
+                    <input type="text" class="form-control" name="task_assign_date" value="{{ task.task_assign_date }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="task_end_date">Deadline</label>
+                    <input type="text" class="form-control" name="task_end_date" value="{{ task.task_end_date }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="assigned_to">Assign To</label>
+                    <input type="text" class="form-control" name="assigned_to" value="{{ task.assigned_to }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="assigned_by">Assign By</label>
+                    <input type="text" class="form-control" name="assigned_by" value="{{ task.assigned_by }}">
+                </div>
+                <input type="submit" name="submitBtn" id="submitBtn" class="btn btn-primary" value="UPDATE">
+            </form>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'task.list' %}" class="btn btn-primary text-uppercase">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

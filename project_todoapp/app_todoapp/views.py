@@ -27,10 +27,41 @@ def task_show(request, id):
     template = "tasks/show.html"
     return render(request, template, context)
 
+def task_update(request):
+    if request.method == "POST":
+        task = Task.objects.get(id=request.POST.get('id'))
+        task.task_title = request.POST.get('task_title')
+        task.task_desc = request.POST.get('task_desc')
+        task.task_category = request.POST.get('task_category')
+        task.assigned_by = request.POST.get('assigned_by')
+        task.assigned_to = request.POST.get('assigned_to')
+        task.task_assign_date = request.POST.get('task_assign_date')
+        task.task_end_date = request.POST.get('task_end_date')
+        task.updated_at = datetime.now()
+        task.save()
+
+        tasks = Task.objects.all()
+        template = "tasks/index.html"
+        context = {
+            "tasks": tasks,
+            "title" : "TASK List",
+            "body_title": "Todo App | TASK List"
+        }
+        return render(request, template, context)
+    else:
+        tasks = Task.objects.all()
+        template = "tasks/index.html"
+        context = {
+            "tasks": tasks,
+            "title" : "TASK List",
+            "body_title": "Todo App | TASK List"
+        }
+        return render(request, template, context)
+
 def task_edit(request, id):
     task = Task.objects.get(id=id)
     context = {
-        "tasks": task,
+        "task": task,
         "title" : "TASK Edit",
         "body_title": "Todo App | TASK Edit"
     }
