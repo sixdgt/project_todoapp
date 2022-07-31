@@ -2,6 +2,8 @@ from datetime import date, datetime
 from operator import imod
 from django.shortcuts import render
 
+from django.core.mail import send_mail
+
 from .forms import TaskCreateForm
 
 from .models import Task
@@ -93,6 +95,14 @@ def task_create(request):
         task.task_end_date = request.POST.get('task_end_date')
         task.created_at = datetime.now()
         task.save()
+
+        # email sending
+        send_mail(
+            'Task Assignment:-' + task.task_title,
+            'You are assgined to new task. Assigned date:- ' + str(task.created_at),
+            'c4crypt@gmail.com',
+            [task.assigned_to]
+        )
 
         tasks = Task.objects.all()
         template = "tasks/index.html"
