@@ -16,8 +16,9 @@ class Task(models.Model):
     updated_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)
     removed_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)
 
-    class Meta:
-        db_table = "tbl_task"
+    def __str__(self):
+        return self.task_title
 
-    
+    class Meta:
+        db_table = "tbl_task"  
 
