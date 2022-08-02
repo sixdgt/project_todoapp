@@ -19,7 +19,7 @@
             <h3>CREATE FORM</h3>
         </div>
         <div class="card-body">
-            <form action="{% url 'task.create' %}" method="post">
+            <form action="{% url 'task.create' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
 
@@ -27,8 +27,8 @@
             </form>
         </div>
         <div class="card-footer">
-            {% if msg %}
-            {{ msg }}
+            {% if error %}
+            {{ error }}
             {% endif %}
         </div>
     </div>

@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from operator import imod
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from django.core.mail import send_mail
 
@@ -85,33 +85,40 @@ def task_delete(request, id):
 
 def task_create(request):
     if request.method == "POST":
-        task = Task()
-        task.task_title = request.POST.get('task_title')
-        task.task_desc = request.POST.get('task_desc')
-        task.task_category = request.POST.get('task_category')
-        task.assigned_by = request.POST.get('assigned_by')
-        task.assigned_to = request.POST.get('assigned_to')
-        task.task_assign_date = request.POST.get('task_assign_date')
-        task.task_end_date = request.POST.get('task_end_date')
-        task.created_at = datetime.now()
-        task.save()
+        # task = Task()
+        # task.task_title = request.POST.get('task_title')
+        # task.task_desc = request.POST.get('task_desc')
+        # task.task_category = request.POST.get('task_category')
+        # task.assigned_by = request.POST.get('assigned_by')
+        # task.assigned_to = request.POST.get('assigned_to')
+        # task.task_assign_date = request.POST.get('task_assign_date')
+        # task.task_end_date = request.POST.get('task_end_date')
+        # task.created_at = datetime.now()
+        # task.save()
+        try:
+            form = TaskCreateForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                # email sending
+                send_mail(
+                    'Task Assignment:-' + form.task_title,
+                    'You are assgined to new task. Assigned date:- ' + str(form.created_at),
+                    'c4crypt@gmail.com',
+                    [form.assigned_to]
+                )
 
-        # email sending
-        send_mail(
-            'Task Assignment:-' + task.task_title,
-            'You are assgined to new task. Assigned date:- ' + str(task.created_at),
-            'c4crypt@gmail.com',
-            [task.assigned_to]
-        )
-
-        tasks = Task.objects.all()
-        template = "tasks/index.html"
-        context = {
-            "tasks": tasks,
-            "title" : "TASK List",
-            "body_title": "Todo App | TASK List"
-        }
-        return render(request, template, context)
+                tasks = Task.objects.all()
+                template = "tasks/index.html"
+                context = {
+                    "tasks": tasks,
+                    "title" : "TASK List",
+                    "body_title": "Todo App | TASK List"
+                }
+                return render(request, template, context)
+            else:
+                return render(request, 'tasks/create.html', {'error': form})
+        except:
+            return render(request, 'tasks/create.html', {'error': form})
     else:
         template = "tasks/create.html"
         create_form = TaskCreateForm()

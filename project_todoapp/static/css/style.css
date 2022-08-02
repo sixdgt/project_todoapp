@@ -3,7 +3,7 @@ body {
     color: rgb(255, 0, 0);
 }
 
-input, textarea {
+input, textarea{
     width: 500px;
     height: 50px;
     border-radius: 50px;

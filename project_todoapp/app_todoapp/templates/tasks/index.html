@@ -24,6 +24,7 @@
                     <th>Deadline</th>
                     <th>Assign to</th>
                     <th>Assign By</th>
+                    <th>File</th>
                     <th colspan="3">Action</th>
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                     <td>{{ task.task_end_date }}</td>
                     <td>{{ task.assigned_to }}</td>
                     <td>{{ task.assigned_by }}</td>
+                    <td>{% load static %}<img src="{{ task.task_file }}" alt=""></td>
                     <td><a href="{% url 'task.edit' task.id %}"><i class="fa-solid fa-pen"></i></a></td>
                     <td><a href="{% url 'task.show' task.id %}"><i class="fa-solid fa-eye"></i></a></td>
                     <td><a href="{% url 'task.delete' task.id %}"><i class="fa-solid fa-trash"></i></a></td>
