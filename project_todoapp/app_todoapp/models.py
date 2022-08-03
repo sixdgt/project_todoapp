@@ -20,5 +20,16 @@ class Task(models.Model):
         return self.task_title
 
     class Meta:
-        db_table = "tbl_task"  
+        db_table = "tbl_task" 
+
+class AppUser(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, unique=True)
+    password = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        db_table = 'tbl_user'
 

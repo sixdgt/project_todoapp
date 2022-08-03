@@ -4,20 +4,47 @@ from django.shortcuts import redirect, render
 
 from django.core.mail import send_mail
 
-from .forms import TaskCreateForm
+from .forms import LoginForm, RegisterForm, TaskCreateForm
 
 from .models import Task
 
 # Create your views here.
+def user_register(request):
+    if request.method == "POST":
+        form_data = RegisterForm(request.POST)
+        if form_data.is_valid():
+            form_data.save()
+            # storing session
+            request.session.setdefault('user_session', request.POST.get('email'))
+            # request.session['user_session'] = request.POST.get('email')
+            return redirect('task.list')
+        else:
+            return redirect('user.register')
+    else:
+        reg_form = RegisterForm()
+        context = {'form': reg_form}
+        return render(request, 'users/register.html', context)
+
+def user_login(request):
+    if request.method == "POST":
+        return render(request, 'users/login.html')
+    else:
+        login_form = LoginForm()
+        context = {'form': login_form}
+        return render(request, 'users/login.html', context)
+
 def task_index(request):
-    tasks = Task.objects.all()
-    context = {
-        "tasks": tasks,
-        "title" : "TASK List",
-        "body_title": "Todo App | TASK List"
-    }
-    template = "tasks/index.html"
-    return render(request, template, context)
+    if request.session.has_key('user_session'):
+        tasks = Task.objects.all()
+        context = {
+            "tasks": tasks,
+            "title" : "TASK List",
+            "body_title": "Todo App | TASK List"
+        }
+        template = "tasks/index.html"
+        return render(request, template, context)
+    else:
+        return redirect('user.login')
 
 def task_show(request, id):
     task = Task.objects.get(id=id)
@@ -41,24 +68,9 @@ def task_update(request):
         task.task_end_date = request.POST.get('task_end_date')
         task.updated_at = datetime.now()
         task.save()
-
-        tasks = Task.objects.all()
-        template = "tasks/index.html"
-        context = {
-            "tasks": tasks,
-            "title" : "TASK List",
-            "body_title": "Todo App | TASK List"
-        }
-        return render(request, template, context)
+        return redirect('task.list')
     else:
-        tasks = Task.objects.all()
-        template = "tasks/index.html"
-        context = {
-            "tasks": tasks,
-            "title" : "TASK List",
-            "body_title": "Todo App | TASK List"
-        }
-        return render(request, template, context)
+        return redirect('task.list')
 
 def task_edit(request, id):
     task = Task.objects.get(id=id)
@@ -74,14 +86,7 @@ def task_delete(request, id):
     task = Task.objects.get(id=id)
     task.delete()
 
-    tasks = Task.objects.all()
-    context = {
-        "tasks": tasks,
-        "title" : "TASK List",
-        "body_title": "Todo App | TASK List"
-    }
-    template = "tasks/index.html"
-    return render(request, template, context)
+    return redirect('task.list')
 
 def task_create(request):
     if request.method == "POST":
@@ -107,14 +112,7 @@ def task_create(request):
                     [form.assigned_to]
                 )
 
-                tasks = Task.objects.all()
-                template = "tasks/index.html"
-                context = {
-                    "tasks": tasks,
-                    "title" : "TASK List",
-                    "body_title": "Todo App | TASK List"
-                }
-                return render(request, template, context)
+                return redirect('task.list')
             else:
                 return render(request, 'tasks/create.html', {'error': form})
         except:

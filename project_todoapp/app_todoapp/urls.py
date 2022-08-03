@@ -3,6 +3,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
+    path('users/login/', views.user_login, name='user.login'),
+    path('users/register/', views.user_register, name='user.register'),
     path('tasks/', views.task_index, name='task.list'),
     path('task/create/', views.task_create, name='task.create'),
     path('task/update/', views.task_update, name='task.update'),
