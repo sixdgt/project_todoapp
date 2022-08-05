@@ -1,14 +1,23 @@
 from datetime import date, datetime
-from operator import imod
 from django.shortcuts import redirect, render
-
 from django.core.mail import send_mail
-
 from .forms import LoginForm, RegisterForm, TaskCreateForm
+from .models import AppUser, Task
 
-from .models import Task
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import permissions
+from .serializers import TaskSerializer
 
 # Create your views here.
+class TaskApiView(APIView):
+    def get(self, request):
+        tasks = Task.objects.all()
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 def user_register(request):
     if request.method == "POST":
         form_data = RegisterForm(request.POST)
@@ -27,7 +36,14 @@ def user_register(request):
 
 def user_login(request):
     if request.method == "POST":
-        return render(request, 'users/login.html')
+        req_email = request.POST.get('email')
+        req_password = request.POST.get('password')
+        db_data = AppUser.objects.get(email=req_email)
+        if db_data.password == req_password:
+            request.session.setdefault('user_session', db_data.email)
+            return redirect('task.list')
+        else:
+            return redirect('user.login')
     else:
         login_form = LoginForm()
         context = {'form': login_form}
