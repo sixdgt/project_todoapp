@@ -3,7 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import (TaskApiView,)
+from .views import (TaskApiView, TaskApiIDView)
 
 urlpatterns = [
     path('users/login/', views.user_login, name='user.login'),
@@ -16,5 +16,7 @@ urlpatterns = [
     path('task/delete/<int:id>', views.task_delete, name='task.delete'),
 
     # api urls
-    path('api/v1/tasks/', TaskApiView.as_view())
+    path('api/v1/tasks/', TaskApiView.as_view()),
+    path('api/v1/task/<int:id>/', TaskApiIDView.as_view())
+
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

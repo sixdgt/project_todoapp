@@ -10,7 +10,7 @@ class Task(models.Model):
     task_end_date = models.DateField(default=0, null=True)
     assigned_by = models.CharField(max_length=200)
     assigned_to = models.EmailField(unique=True, default=None)
-    task_file = models.FileField()
+    task_file = models.FileField(default=None, null=True, blank=True)
     is_removed = models.BooleanField(default=False, blank=True)
     created_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)
     updated_at = models.DateTimeField(default=datetime.now(), null=True, blank=True)

@@ -9,13 +9,94 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from .serializers import TaskSerializer
+from app_todoapp import serializers
 
 # Create your views here.
 class TaskApiView(APIView):
     def get(self, request):
         tasks = Task.objects.all()
         serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        context = {
+            "status_code": 200,
+            "message": "Task List Fetched Successfully",
+            "data": serializer.data,
+            "error": []
+        }
+        return Response(context, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            conetxt = {
+                "status_code": 400,
+                "message": "Bad Request",
+                "data": [],
+                "error": serializer.errors
+            }
+            return Response(conetxt, status=status.HTTP_400_BAD_REQUEST)
+
+class TaskApiIDView(APIView):
+    def get_object(self, id):
+        try:
+            return Task.objects.get(id=id)
+        except Task.DoesNotExist:
+            return None
+
+    def get(self, request, id):
+        task_instance = self.get_object(id)
+        if not task_instance:
+            conetxt = {
+                "status_code": 404,
+                "message": "Not Found",
+                "data": [],
+                "error": "Data not found"
+            }
+            return Response(conetxt, status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = TaskSerializer(task_instance)
+            context = {
+                "status_code": 200,
+                "message": "Task Fetched Successfully",
+                "data": serializer.data,
+                "error": []
+            }
+            return Response(context, status=status.HTTP_200_OK)
+    
+    def put(self, request, id):
+        task_instance = self.get_object(id)
+        if not task_instance:
+            conetxt = {
+                "status_code": 404,
+                "message": "Not Found",
+                "data": [],
+                "error": "Data not found"
+            }
+            return Response(conetxt, status=status.HTTP_404_NOT_FOUND)
+        serializer = TaskSerializer(instance=task_instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, id):
+        task_instance = self.get_object(id)
+        if not task_instance:
+            conetxt = {
+                "status_code": 404,
+                "message": "Not Found",
+                "data": [],
+                "error": "Data not found"
+            }
+            return Response(conetxt, status=status.HTTP_404_NOT_FOUND)
+        task_instance.delete()
+        return Response({"message": "Deleted Successfully"}, status=status.HTTP_200_OK)
+    
+    
+
 
 
 def user_register(request):
